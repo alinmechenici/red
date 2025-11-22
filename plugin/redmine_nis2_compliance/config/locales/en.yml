@@ -1,0 +1,51 @@
+# English strings for NIS2 Compliance Plugin
+en:
+  # Labels
+  label_nis2_compliance: "NIS2 Compliance"
+  label_nis2_compliance_dashboard: "NIS2 Compliance Dashboard"
+  label_gap_analysis: "Gap Analysis"
+  label_gap_analyses: "Gap Analyses"
+  label_control: "Control"
+  label_controls: "Controls"
+  label_assessment: "Assessment"
+  label_assessments: "Assessments"
+  label_overall_compliance: "Overall Compliance"
+  label_compliance_by_category: "Compliance by Category"
+  label_compliance_score: "Compliance Score"
+  label_critical_gaps: "Critical Gaps"
+  label_recent_gap_analyses: "Recent Gap Analyses"
+  label_no_gap_analysis_yet: "No gap analyses have been created yet."
+  label_no_critical_gaps: "No critical gaps identified"
+
+  # Fields
+  field_control_id: "Control ID"
+  field_category: "Category"
+  field_title: "Title"
+  field_status: "Status"
+  field_priority: "Priority"
+  field_responsible: "Responsible"
+  field_target_date: "Target Date"
+  field_name: "Name"
+  field_compliance_score: "Compliance Score"
+  field_assessment_date: "Assessment Date"
+  field_assessor: "Assessor"
+  field_implementation_status: "Implementation Status"
+  field_gap_description: "Gap Description"
+  field_recommendations: "Recommendations"
+
+  # Buttons
+  button_create_gap_analysis: "Create Gap Analysis"
+  button_assess_control: "Assess Control"
+  button_create_issue: "Create Remediation Issue"
+  button_review: "Review & Approve"
+  button_export: "Export"
+
+  # Project module
+  project_module_nis2_compliance: "NIS2 Compliance"
+
+  # Permissions
+  permission_view_nis2_compliance: "View NIS2 compliance"
+  permission_manage_nis2_gap_analysis: "Manage NIS2 gap analyses"
+  permission_manage_nis2_controls: "Manage NIS2 controls"
+  permission_export_nis2_reports: "Export NIS2 reports"
+  permission_view_nis2_audit_log: "View NIS2 audit log"

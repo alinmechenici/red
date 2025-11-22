@@ -1,0 +1,154 @@
+<div class="nis2-dashboard">
+  <div class="contextual">
+    <%= link_to 'New Gap Analysis',
+                { controller: 'nis2_gap_analyses', action: 'new', project_id: @project },
+                class: 'icon icon-add' %>
+  </div>
+
+  <h2><%=l(:label_nis2_compliance_dashboard) %></h2>
+
+  <% if @show_empty_state %>
+    <div class="nodata">
+      <p><%= l(:label_no_gap_analysis_yet) %></p>
+      <p>
+        <%= link_to l(:button_create_gap_analysis),
+                    { controller: 'nis2_gap_analyses', action: 'new', project_id: @project },
+                    class: 'icon icon-add' %>
+      </p>
+    </div>
+  <% else %>
+    <!-- Compliance Score Overview -->
+    <div class="splitcontentleft">
+      <div class="box">
+        <h3><%= l(:label_overall_compliance) %></h3>
+        <div class="compliance-score-display">
+          <div class="score-circle <%= @latest_analysis.compliance_badge_class %>">
+            <span class="score-value"><%= number_to_percentage(@compliance_score, precision: 1) %></span>
+          </div>
+          <p class="compliance-level"><%= @latest_analysis.compliance_level_label %></p>
+          <p class="compliance-description">
+            <%= compliance_level_description(@compliance_score) %>
+          </p>
+        </div>
+      </div>
+
+      <% if @overdue_count > 0 %>
+        <div class="flash warning">
+          <strong>⚠️ <%= @overdue_count %> overdue remediation <%= @overdue_count == 1 ? 'task' : 'tasks' %></strong>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="splitcontentright">
+      <div class="box">
+        <h3><%= l(:label_compliance_by_category) %></h3>
+        <table class="list category-scores">
+          <% @compliance_by_category.each do |category, score| %>
+            <tr>
+              <td class="category-name">
+                <%= category_icon(category.parameterize.underscore) %>
+                <%= category %>
+              </td>
+              <td class="category-score">
+                <%= compliance_progress_bar(score) %>
+              </td>
+            </tr>
+          <% end %>
+        </table>
+      </div>
+    </div>
+
+    <!-- Critical Gaps -->
+    <div style="clear: both;"></div>
+
+    <% if @critical_gaps.any? %>
+      <div class="box">
+        <h3><%= l(:label_critical_gaps) %></h3>
+        <table class="list gaps">
+          <thead>
+            <tr>
+              <th><%= l(:field_control_id) %></th>
+              <th><%= l(:field_title) %></th>
+              <th><%= l(:field_status) %></th>
+              <th><%= l(:field_priority) %></th>
+              <th><%= l(:field_responsible) %></th>
+              <th><%= l(:field_target_date) %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @critical_gaps.each do |assessment| %>
+              <tr class="<%= cycle('odd', 'even') %>">
+                <td>
+                  <%= link_to assessment.control.control_id,
+                              { controller: 'nis2_assessments',
+                                action: 'edit',
+                                id: assessment,
+                                gap_analysis_id: @latest_analysis,
+                                project_id: @project } %>
+                </td>
+                <td><%= assessment.control.title %></td>
+                <td><%= implementation_status_badge(assessment.implementation_status) %></td>
+                <td><%= priority_badge(assessment.control.priority) %></td>
+                <td><%= assessment.responsible_user ? link_to_user(assessment.responsible_user) : '-' %></td>
+                <td>
+                  <%= format_date(assessment.target_completion_date) %>
+                  <%= days_until_badge(assessment.target_completion_date) if assessment.target_completion_date %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+
+    <!-- Recent Gap Analyses -->
+    <div class="box">
+      <h3><%= l(:label_recent_gap_analyses) %></h3>
+      <table class="list">
+        <thead>
+          <tr>
+            <th><%= l(:field_name) %></th>
+            <th><%= l(:field_status) %></th>
+            <th><%= l(:field_compliance_score) %></th>
+            <th><%= l(:field_assessment_date) %></th>
+            <th><%= l(:field_assessor) %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @gap_analyses.each do |gap_analysis| %>
+            <tr class="<%= cycle('odd', 'even') %>">
+              <td>
+                <%= link_to gap_analysis.name,
+                            { controller: 'nis2_gap_analyses',
+                              action: 'show',
+                              id: gap_analysis,
+                              project_id: @project } %>
+              </td>
+              <td><%= gap_analysis_status_badge(gap_analysis) %></td>
+              <td><%= compliance_score_badge(gap_analysis.overall_compliance_score) %></td>
+              <td><%= format_date(gap_analysis.assessment_date) %></td>
+              <td><%= link_to_user(gap_analysis.assessor) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</div>
+
+<% content_for :header_tags do %>
+  <style>
+    .nis2-dashboard .compliance-score-display { text-align: center; padding: 20px; }
+    .nis2-dashboard .score-circle { display: inline-block; width: 150px; height: 150px; border-radius: 50%;
+                                     display: flex; align-items: center; justify-content: center;
+                                     font-size: 36px; font-weight: bold; margin: 20px auto; }
+    .nis2-dashboard .score-value { font-size: 32px; }
+    .nis2-dashboard .category-scores td.category-name { width: 30%; }
+    .nis2-dashboard .category-scores td.category-score { width: 70%; }
+    .nis2-dashboard .label-success { background-color: #28a745; color: white; }
+    .nis2-dashboard .label-warning { background-color: #ffc107; color: black; }
+    .nis2-dashboard .label-orange { background-color: #fd7e14; color: white; }
+    .nis2-dashboard .label-danger { background-color: #dc3545; color: white; }
+    .nis2-dashboard .label { padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; }
+  </style>
+<% end %>
