@@ -1,0 +1,7 @@
+<h2><%=l(:label_edit_gap_analysis)%></h2>
+
+<%= form_for @gap_analysis,
+             url: { action: 'update', id: @gap_analysis, project_id: @project },
+             html: { method: :put, class: 'gap-analysis-form' } do |f| %>
+  <%= render partial: 'form', locals: { f: f } %>
+<% end %>

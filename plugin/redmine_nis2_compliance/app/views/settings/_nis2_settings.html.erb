@@ -1,0 +1,129 @@
+<div class="nis2-settings">
+  <h3><%=l(:label_nis2_general_settings)%></h3>
+
+  <p>
+    <label>
+      <%= check_box_tag 'settings[enable_auto_issue_creation]',
+                        '1',
+                        @settings['enable_auto_issue_creation'] == '1' %>
+      <%=l(:setting_enable_auto_issue_creation)%>
+    </label>
+    <br/><em class="info"><%=l(:text_enable_auto_issue_creation_info)%></em>
+  </p>
+
+  <p>
+    <label for="settings_gap_analysis_reminder_days">
+      <%=l(:setting_gap_analysis_reminder_days)%>
+    </label>
+    <%= text_field_tag 'settings[gap_analysis_reminder_days]',
+                       @settings['gap_analysis_reminder_days'] || '90',
+                       size: 5 %>
+    <em class="info"><%=l(:text_days)%></em>
+    <br/><em class="info"><%=l(:text_gap_analysis_reminder_info)%></em>
+  </p>
+
+  <p>
+    <label for="settings_compliance_threshold">
+      <%=l(:setting_compliance_threshold)%>
+    </label>
+    <%= text_field_tag 'settings[compliance_threshold]',
+                       @settings['compliance_threshold'] || '70',
+                       size: 5 %>
+    <em class="info">(%)</em>
+    <br/><em class="info"><%=l(:text_compliance_threshold_info)%></em>
+  </p>
+
+  <hr/>
+  <h3><%=l(:label_nis2_audit_settings)%></h3>
+
+  <p>
+    <label>
+      <%= check_box_tag 'settings[enable_audit_logging]',
+                        '1',
+                        @settings['enable_audit_logging'] == '1' %>
+      <%=l(:setting_enable_audit_logging)%>
+    </label>
+    <br/><em class="info"><%=l(:text_enable_audit_logging_info)%></em>
+  </p>
+
+  <hr/>
+  <h3><%=l(:label_nis2_notification_settings)%></h3>
+
+  <p>
+    <label>
+      <%= check_box_tag 'settings[critical_gap_notification]',
+                        '1',
+                        @settings['critical_gap_notification'] == '1' %>
+      <%=l(:setting_critical_gap_notification)%>
+    </label>
+    <br/><em class="info"><%=l(:text_critical_gap_notification_info)%></em>
+  </p>
+
+  <p>
+    <label for="settings_overdue_reminder_frequency">
+      <%=l(:setting_overdue_reminder_frequency)%>
+    </label>
+    <%= select_tag 'settings[overdue_reminder_frequency]',
+                   options_for_select(
+                     [
+                       [l(:label_daily), 'daily'],
+                       [l(:label_weekly), 'weekly'],
+                       [l(:label_monthly), 'monthly'],
+                       [l(:label_disabled), 'disabled']
+                     ],
+                     @settings['overdue_reminder_frequency'] || 'weekly'
+                   ) %>
+    <br/><em class="info"><%=l(:text_overdue_reminder_frequency_info)%></em>
+  </p>
+
+  <p>
+    <label for="settings_notification_emails">
+      <%=l(:setting_notification_emails)%>
+    </label>
+    <%= text_area_tag 'settings[notification_emails]',
+                      @settings['notification_emails'],
+                      rows: 3, cols: 60,
+                      placeholder: 'compliance@example.com, security@example.com' %>
+    <br/><em class="info"><%=l(:text_notification_emails_info)%></em>
+  </p>
+
+  <hr/>
+  <h3><%=l(:label_nis2_workflow_settings)%></h3>
+
+  <p>
+    <label for="settings_default_reviewer_id">
+      <%=l(:setting_default_reviewer)%>
+    </label>
+    <%= select_tag 'settings[default_reviewer_id]',
+                   options_for_select(
+                     [[l(:label_none), nil]] +
+                     User.active.sorted.map { |u| [u.name, u.id] },
+                     @settings['default_reviewer_id']
+                   ) %>
+    <br/><em class="info"><%=l(:text_default_reviewer_info)%></em>
+  </p>
+</div>
+
+<% content_for :header_tags do %>
+  <style>
+    .nis2-settings p {
+      margin: 15px 0;
+    }
+    .nis2-settings label {
+      font-weight: bold;
+    }
+    .nis2-settings em.info {
+      color: #666;
+      font-size: 0.9em;
+    }
+    .nis2-settings hr {
+      margin: 25px 0;
+      border: none;
+      border-top: 1px solid #ddd;
+    }
+    .nis2-settings h3 {
+      color: #169;
+      margin-top: 0;
+    }
+  </style>
+<% end %>

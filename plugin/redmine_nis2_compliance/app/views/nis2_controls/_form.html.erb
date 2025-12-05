@@ -1,0 +1,111 @@
+<%= error_messages_for 'control' %>
+
+<div class="box tabular">
+  <p>
+    <%= f.label :control_id, l(:field_control_id) %> <span class="required">*</span>
+    <%= f.text_field :control_id, required: true, size: 30, maxlength: 50,
+                     placeholder: 'e.g., NIS2-RM-10' %>
+  </p>
+
+  <p>
+    <%= f.label :category, l(:field_category) %> <span class="required">*</span>
+    <%= f.select :category,
+                 Nis2Control.categories_for_select,
+                 {}, required: true %>
+  </p>
+
+  <p>
+    <%= f.label :domain, l(:field_domain) %>
+    <%= f.text_field :domain, size: 60, maxlength: 100,
+                     placeholder: 'e.g., access_control, network_security' %>
+  </p>
+
+  <p>
+    <%= f.label :title, l(:field_title) %> <span class="required">*</span>
+    <%= f.text_field :title, required: true, size: 60, maxlength: 255 %>
+  </p>
+
+  <p>
+    <%= f.label :description, l(:field_description) %>
+    <%= f.text_area :description, rows: 4, cols: 60 %>
+  </p>
+
+  <p>
+    <%= f.label :requirement_text, l(:label_requirement_text) %>
+    <%= f.text_area :requirement_text, rows: 5, cols: 60,
+                    placeholder: l(:text_nis2_requirement) %>
+  </p>
+
+  <p>
+    <%= f.label :priority, l(:field_priority) %> <span class="required">*</span>
+    <%= f.select :priority,
+                 Nis2Control.priorities_for_select,
+                 {}, required: true %>
+  </p>
+
+  <p>
+    <%= f.label :effort_estimate, l(:field_effort_estimate) %>
+    <%= f.number_field :effort_estimate, min: 0, placeholder: l(:label_person_days) %>
+    <em class="info"><%=l(:label_in_days)%></em>
+  </p>
+
+  <p>
+    <%= f.label :typical_implementation_time, l(:label_typical_implementation_time) %>
+    <%= f.text_field :typical_implementation_time, size: 30,
+                     placeholder: 'e.g., 4-6 weeks' %>
+  </p>
+
+  <p>
+    <%= f.label :position, l(:field_position) %>
+    <%= f.number_field :position, min: 0 %>
+    <em class="info"><%=l(:text_position_for_sorting)%></em>
+  </p>
+
+  <p>
+    <%= f.check_box :is_active %>
+    <%= f.label :is_active, l(:field_active) %>
+  </p>
+
+  <fieldset class="box">
+    <legend><%=l(:label_implementation_guidance)%></legend>
+    <p class="info"><%=l(:text_one_per_line)%></p>
+    <%= f.text_area :implementation_guidance,
+                    value: (@control.implementation_guidance || []).join("\n"),
+                    rows: 8, cols: 60,
+                    placeholder: l(:text_implementation_guidance_example) %>
+  </fieldset>
+
+  <fieldset class="box">
+    <legend><%=l(:label_verification_methods)%></legend>
+    <p class="info"><%=l(:text_one_per_line)%></p>
+    <%= f.text_area :verification_methods,
+                    value: (@control.verification_methods || []).join("\n"),
+                    rows: 6, cols: 60,
+                    placeholder: l(:text_verification_methods_example) %>
+  </fieldset>
+
+  <fieldset class="box">
+    <legend><%=l(:label_evidence_types)%></legend>
+    <p class="info"><%=l(:text_one_per_line)%></p>
+    <%= f.text_area :evidence_types,
+                    value: (@control.evidence_types || []).join("\n"),
+                    rows: 6, cols: 60,
+                    placeholder: l(:text_evidence_types_example) %>
+  </fieldset>
+
+  <fieldset class="box">
+    <legend><%=l(:label_iso27001_mapping)%></legend>
+    <p class="info"><%=l(:text_comma_separated)%></p>
+    <%= f.text_field :iso27001_mapping,
+                     value: (@control.iso27001_mapping || []).join(', '),
+                     size: 60,
+                     placeholder: 'e.g., A.5.15, A.5.17, A.8.5' %>
+  </fieldset>
+</div>
+
+<p style="margin-top: 15px;">
+  <%= f.submit l(:button_save), class: 'button-positive' %>
+  <%= link_to l(:button_cancel),
+              { action: 'index' },
+              class: 'button-negative' %>
+</p>

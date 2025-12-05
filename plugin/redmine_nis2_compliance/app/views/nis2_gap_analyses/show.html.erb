@@ -1,0 +1,214 @@
+<div class="contextual">
+  <%= link_to l(:button_export),
+              { action: 'export', id: @gap_analysis, project_id: @project, format: 'csv' },
+              class: 'icon icon-download' %>
+  <% if User.current.allowed_to?(:manage_nis2_gap_analysis, @project) %>
+    <%= link_to l(:button_edit),
+                { action: 'edit', id: @gap_analysis, project_id: @project },
+                class: 'icon icon-edit' %>
+    <% if @gap_analysis.can_be_reviewed? && User.current.allowed_to?(:manage_nis2_gap_analysis, @project) %>
+      <%= link_to l(:button_review),
+                  { action: 'review', id: @gap_analysis, project_id: @project },
+                  method: :post,
+                  class: 'icon icon-checked' %>
+    <% end %>
+  <% end %>
+</div>
+
+<h2><%= @gap_analysis.name %></h2>
+
+<% if @gap_analysis.description.present? %>
+  <p class="description"><%= simple_format(@gap_analysis.description) %></p>
+<% end %>
+
+<div class="gap-analysis-overview">
+  <div class="splitcontentleft">
+    <div class="attributes box">
+      <h3><%=l(:label_details)%></h3>
+      <table class="attributes">
+        <tr>
+          <th><%=l(:field_status)%>:</th>
+          <td><%= gap_analysis_status_badge(@gap_analysis) %></td>
+        </tr>
+        <tr>
+          <th><%=l(:field_assessment_date)%>:</th>
+          <td><%= format_date(@gap_analysis.assessment_date) %></td>
+        </tr>
+        <tr>
+          <th><%=l(:field_assessor)%>:</th>
+          <td><%= link_to_user(@gap_analysis.assessor) %></td>
+        </tr>
+        <% if @gap_analysis.reviewer %>
+          <tr>
+            <th><%=l(:field_reviewer)%>:</th>
+            <td><%= link_to_user(@gap_analysis.reviewer) %></td>
+          </tr>
+          <tr>
+            <th><%=l(:field_reviewed_at)%>:</th>
+            <td><%= format_date(@gap_analysis.reviewed_at) %></td>
+          </tr>
+        <% end %>
+        <tr>
+          <th><%=l(:label_progress)%>:</th>
+          <td><%= @progress %>% (<%=l(:label_assessed)%>: <%= @gap_analysis.control_assessments.where.not(implementation_status: nil).count %> / <%= @gap_analysis.control_assessments.count %>)</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="splitcontentright">
+    <div class="box">
+      <h3><%=l(:label_compliance_score)%></h3>
+      <div class="compliance-display">
+        <div class="score-large <%= @gap_analysis.compliance_badge_class %>">
+          <%= number_to_percentage(@gap_analysis.overall_compliance_score || 0, precision: 1) %>
+        </div>
+        <p class="compliance-level"><%= @gap_analysis.compliance_level_label %></p>
+      </div>
+
+      <div class="category-scores">
+        <table class="list">
+          <tr>
+            <td><%=l(:label_risk_management)%>:</td>
+            <td><%= compliance_progress_bar(@gap_analysis.risk_management_score) %></td>
+          </tr>
+          <tr>
+            <td><%=l(:label_corporate_accountability)%>:</td>
+            <td><%= compliance_progress_bar(@gap_analysis.accountability_score) %></td>
+          </tr>
+          <tr>
+            <td><%=l(:label_reporting_obligations)%>:</td>
+            <td><%= compliance_progress_bar(@gap_analysis.reporting_score) %></td>
+          </tr>
+          <tr>
+            <td><%=l(:label_business_continuity)%>:</td>
+            <td><%= compliance_progress_bar(@gap_analysis.business_continuity_score) %></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div style="clear: both;"></div>
+
+  <% if @critical_gaps_count > 0 || @high_gaps_count > 0 %>
+    <div class="flash warning">
+      <strong>⚠️ Gaps Identified:</strong>
+      <%= "#{@critical_gaps_count} critical" if @critical_gaps_count > 0 %>
+      <%= ", " if @critical_gaps_count > 0 && @high_gaps_count > 0 %>
+      <%= "#{@high_gaps_count} high priority" if @high_gaps_count > 0 %>
+    </div>
+  <% end %>
+</div>
+
+<!-- Control Assessments by Category -->
+<h3><%=l(:label_control_assessments)%></h3>
+
+<% @assessments_by_category.each do |category, assessments| %>
+  <div class="category-section">
+    <h4 class="category-header">
+      <%= category_icon(category) %>
+      <%= category_name(category) %>
+      <span class="category-count">(<%= assessments.count %> <%=l(:label_controls)%>)</span>
+    </h4>
+
+    <table class="list assessments">
+      <thead>
+        <tr>
+          <th style="width: 10%"><%=l(:field_control_id)%></th>
+          <th style="width: 30%"><%=l(:field_title)%></th>
+          <th style="width: 10%"><%=l(:field_priority)%></th>
+          <th style="width: 15%"><%=l(:field_status)%></th>
+          <th style="width: 10%"><%=l(:field_score)%></th>
+          <th style="width: 15%"><%=l(:field_responsible)%></th>
+          <th style="width: 10%"><%=l(:field_actions)%></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% assessments.each do |assessment| %>
+          <tr class="<%= cycle('odd', 'even') %> <%= assessment.implementation_status %>">
+            <td class="control-id">
+              <%= assessment.control.control_id %>
+            </td>
+            <td class="control-title">
+              <%= assessment.control.title %>
+            </td>
+            <td class="priority">
+              <%= priority_badge(assessment.control.priority) %>
+            </td>
+            <td class="status">
+              <%= implementation_status_badge(assessment.implementation_status) %>
+            </td>
+            <td class="score">
+              <%= number_to_percentage(assessment.compliance_score || 0, precision: 0) %>
+            </td>
+            <td class="responsible">
+              <%= link_to_user(assessment.responsible_user) if assessment.responsible_user %>
+              <% if assessment.is_overdue? %>
+                <br/><span class="overdue">⚠️ Overdue</span>
+              <% end %>
+            </td>
+            <td class="buttons">
+              <%= link_to l(:button_assess),
+                          { controller: 'nis2_assessments',
+                            action: 'edit',
+                            id: assessment,
+                            gap_analysis_id: @gap_analysis,
+                            project_id: @project },
+                          class: 'icon icon-edit',
+                          title: l(:button_assess) %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
+
+<% content_for :header_tags do %>
+  <style>
+    .gap-analysis-overview .score-large {
+      font-size: 48px;
+      font-weight: bold;
+      text-align: center;
+      padding: 20px;
+      margin: 10px 0;
+      border-radius: 8px;
+    }
+    .gap-analysis-overview .compliance-display {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .gap-analysis-overview .category-scores td {
+      padding: 5px;
+    }
+    .category-section {
+      margin-bottom: 30px;
+    }
+    .category-header {
+      background: #f0f0f0;
+      padding: 10px;
+      border-left: 4px solid #169;
+      margin-bottom: 10px;
+    }
+    .category-count {
+      color: #666;
+      font-weight: normal;
+      font-size: 0.9em;
+    }
+    .assessments tr.not_implemented {
+      background-color: #ffe6e6;
+    }
+    .assessments tr.partially_implemented {
+      background-color: #fff8e6;
+    }
+    .assessments tr.implemented {
+      background-color: #e6f7e6;
+    }
+    .overdue {
+      color: #d00;
+      font-size: 0.9em;
+      font-weight: bold;
+    }
+  </style>
+<% end %>

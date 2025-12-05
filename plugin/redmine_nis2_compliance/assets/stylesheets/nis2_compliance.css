@@ -1,0 +1,476 @@
+/* ===================================
+   NIS2 Compliance Plugin Styles
+   =================================== */
+
+/* === Labels and Badges === */
+.label {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.label-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.label-warning {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.label-orange {
+  background-color: #fd7e14;
+  color: white;
+}
+
+.label-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.label-critical {
+  background-color: #721c24;
+  color: white;
+}
+
+.label-high {
+  background-color: #dc3545;
+  color: white;
+}
+
+.label-medium {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.label-low {
+  background-color: #6c757d;
+  color: white;
+}
+
+.label-info {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.label-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.label-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.label-dark {
+  background-color: #343a40;
+  color: white;
+}
+
+.label-default {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+/* === Progress Bars === */
+.progress {
+  height: 20px;
+  background-color: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 5px 0;
+}
+
+.progress-bar {
+  height: 100%;
+  line-height: 20px;
+  color: white;
+  text-align: center;
+  background-color: #007bff;
+  transition: width 0.3s ease;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.progress-bar-success {
+  background-color: #28a745;
+}
+
+.progress-bar-warning {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.progress-bar-orange {
+  background-color: #fd7e14;
+}
+
+.progress-bar-danger {
+  background-color: #dc3545;
+}
+
+/* === Dashboard Styles === */
+.nis2-dashboard {}
+
+.nis2-dashboard .box {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 20px;
+  background: #fff;
+}
+
+.nis2-dashboard .splitcontentleft,
+.nis2-dashboard .splitcontentright {
+  width: 48%;
+}
+
+.nis2-dashboard .splitcontentleft {
+  float: left;
+}
+
+.nis2-dashboard .splitcontentright {
+  float: right;
+}
+
+.nis2-dashboard .compliance-score-display {
+  text-align: center;
+  padding: 20px;
+}
+
+.nis2-dashboard .score-circle {
+  display: inline-block;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: bold;
+  margin: 20px auto;
+  border: 5px solid;
+}
+
+.nis2-dashboard .score-value {
+  font-size: 32px;
+}
+
+.nis2-dashboard .compliance-level {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.nis2-dashboard .compliance-description {
+  color: #666;
+  font-size: 14px;
+}
+
+.nis2-dashboard .category-scores {
+  width: 100%;
+}
+
+.nis2-dashboard .category-scores td.category-name {
+  width: 35%;
+  padding: 8px 5px;
+}
+
+.nis2-dashboard .category-scores td.category-score {
+  width: 65%;
+  padding: 8px 5px;
+}
+
+.nis2-dashboard table.gaps td {
+  padding: 8px 5px;
+}
+
+.nis2-dashboard .nodata {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+  font-size: 16px;
+}
+
+/* === Gap Analysis Show Page === */
+.gap-analysis-overview .score-large {
+  font-size: 48px;
+  font-weight: bold;
+  text-align: center;
+  padding: 20px;
+  margin: 10px 0;
+  border-radius: 8px;
+}
+
+.gap-analysis-overview .compliance-display {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.gap-analysis-overview .category-scores td {
+  padding: 5px;
+}
+
+.category-section {
+  margin-bottom: 30px;
+}
+
+.category-header {
+  background: #f0f0f0;
+  padding: 10px;
+  border-left: 4px solid #169;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.category-count {
+  color: #666;
+  font-weight: normal;
+  font-size: 0.9em;
+}
+
+/* === Assessment Form === */
+.control-details {
+  background: #f9f9f9;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-left: 4px solid #169;
+}
+
+.control-details h3 {
+  margin-top: 0;
+  color: #169;
+}
+
+.control-details details {
+  margin: 10px 0;
+}
+
+.control-details summary {
+  cursor: pointer;
+  user-select: none;
+  padding: 5px 0;
+  font-weight: bold;
+}
+
+.control-details summary:hover {
+  color: #169;
+}
+
+.assessment-form .gap-section,
+.assessment-form .completion-section {
+  background: #fffef0;
+  padding: 15px;
+  border-left: 3px solid #ffc107;
+  margin: 15px 0;
+}
+
+.assessment-form h4 {
+  margin-top: 0;
+  color: #856404;
+}
+
+/* === Table Styles === */
+table.assessments tr.not_implemented {
+  background-color: #ffe6e6 !important;
+}
+
+table.assessments tr.partially_implemented {
+  background-color: #fff8e6 !important;
+}
+
+table.assessments tr.implemented {
+  background-color: #e6f7e6 !important;
+}
+
+table.assessments tr.not_applicable {
+  background-color: #f0f0f0 !important;
+  opacity: 0.7;
+}
+
+tr.inactive {
+  opacity: 0.5;
+}
+
+.overdue {
+  color: #d00;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+/* === Flash Messages === */
+.flash.warning {
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-left: 4px solid #ffc107;
+  color: #856404;
+  padding: 12px 15px;
+  margin: 15px 0;
+  border-radius: 4px;
+}
+
+.flash.notice {
+  background-color: #d1ecf1;
+  border: 1px solid #17a2b8;
+  border-left: 4px solid #17a2b8;
+  color: #0c5460;
+  padding: 12px 15px;
+  margin: 15px 0;
+  border-radius: 4px;
+}
+
+/* === Icons === */
+.icon-security::before {
+  content: "🔒";
+  margin-right: 5px;
+}
+
+.icon-people::before {
+  content: "👥";
+  margin-right: 5px;
+}
+
+.icon-file::before {
+  content: "📄";
+  margin-right: 5px;
+}
+
+.icon-reload::before {
+  content: "🔄";
+  margin-right: 5px;
+}
+
+/* === Control Views === */
+.control-full-details .box {
+  margin-bottom: 20px;
+}
+
+.control-full-details .requirement {
+  border-left: 4px solid #856404;
+  background: #fff8e6;
+}
+
+.control-full-details .requirement-text {
+  font-style: italic;
+  padding: 10px;
+}
+
+.control-full-details ol,
+.control-full-details ul {
+  margin: 10px 0;
+  padding-left: 30px;
+}
+
+.control-full-details li {
+  margin: 5px 0;
+}
+
+/* === Forms === */
+.box.tabular p {
+  padding-left: 180px;
+  margin-bottom: 15px;
+}
+
+.box.tabular label {
+  display: inline-block;
+  width: 160px;
+  margin-left: -180px;
+  padding-right: 20px;
+  text-align: right;
+  font-weight: bold;
+  line-height: 1.8;
+  vertical-align: top;
+}
+
+.box.tabular .required {
+  color: #d00;
+}
+
+.box.tabular em.info {
+  color: #666;
+  font-size: 0.9em;
+  display: block;
+  margin-top: 3px;
+}
+
+.box.tabular fieldset {
+  padding-left: 0;
+  margin: 15px 0;
+}
+
+.box.tabular fieldset legend {
+  font-weight: bold;
+  color: #169;
+}
+
+.box.tabular fieldset p {
+  padding-left: 0;
+}
+
+/* === Buttons === */
+.button-positive {
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
+  color: white !important;
+}
+
+.button-negative {
+  background-color: #6c757d !important;
+  border-color: #6c757d !important;
+  color: white !important;
+}
+
+/* === Responsive Design === */
+@media screen and (max-width: 768px) {
+  .nis2-dashboard .splitcontentleft,
+  .nis2-dashboard .splitcontentright {
+    width: 100%;
+    float: none;
+  }
+
+  .nis2-dashboard .score-circle {
+    width: 120px;
+    height: 120px;
+    font-size: 28px;
+  }
+
+  .box.tabular p {
+    padding-left: 0;
+  }
+
+  .box.tabular label {
+    display: block;
+    width: auto;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    margin-bottom: 5px;
+  }
+}
+
+/* === Utility Classes === */
+.text-center {
+  text-align: center;
+}
+
+.mt-10 {
+  margin-top: 10px;
+}
+
+.mb-10 {
+  margin-bottom: 10px;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+.p-15 {
+  padding: 15px;
+}

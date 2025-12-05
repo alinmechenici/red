@@ -1,0 +1,153 @@
+<div class="contextual">
+  <%= link_to l(:button_back),
+              { action: 'index' },
+              class: 'icon icon-cancel' %>
+  <% if User.current.admin? %>
+    <%= link_to l(:button_edit),
+                { action: 'edit', id: @control },
+                class: 'icon icon-edit' %>
+  <% end %>
+</div>
+
+<h2><%= @control.control_id %>: <%= @control.title %></h2>
+
+<div class="control-full-details">
+  <div class="box">
+    <table class="attributes">
+      <tr>
+        <th style="width: 20%"><%=l(:field_category)%>:</th>
+        <td>
+          <%= category_icon(@control.category) %>
+          <%= @control.category_name %>
+        </td>
+      </tr>
+      <% if @control.domain.present? %>
+        <tr>
+          <th><%=l(:field_domain)%>:</th>
+          <td><%= @control.domain %></td>
+        </tr>
+      <% end %>
+      <tr>
+        <th><%=l(:field_priority)%>:</th>
+        <td><%= priority_badge(@control.priority) %></td>
+      </tr>
+      <tr>
+        <th><%=l(:field_status)%>:</th>
+        <td>
+          <% if @control.is_active %>
+            <span class="label label-success"><%=l(:label_active)%></span>
+          <% else %>
+            <span class="label label-secondary"><%=l(:label_inactive)%></span>
+          <% end %>
+        </td>
+      </tr>
+      <% if @control.iso27001_controls.present? %>
+        <tr>
+          <th><%=l(:label_iso27001_mapping)%>:</th>
+          <td><%= @control.iso27001_controls %></td>
+        </tr>
+      <% end %>
+      <% if @control.effort_estimate %>
+        <tr>
+          <th><%=l(:field_effort_estimate)%>:</th>
+          <td><%= @control.effort_estimate %> <%=l(:label_person_days)%></td>
+        </tr>
+      <% end %>
+      <% if @control.typical_implementation_time.present? %>
+        <tr>
+          <th><%=l(:label_typical_implementation_time)%>:</th>
+          <td><%= @control.typical_implementation_time %></td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+
+  <% if @control.description.present? %>
+    <div class="box">
+      <h3><%=l(:field_description)%></h3>
+      <%= simple_format(@control.description) %>
+    </div>
+  <% end %>
+
+  <% if @control.requirement_text.present? %>
+    <div class="box requirement">
+      <h3><%=l(:label_requirement)%></h3>
+      <div class="requirement-text">
+        <%= simple_format(@control.requirement_text) %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @control.implementation_guidance_list.any? %>
+    <div class="box">
+      <h3><%=l(:label_implementation_guidance)%></h3>
+      <ol>
+        <% @control.implementation_guidance_list.each do |guidance| %>
+          <li><%= guidance %></li>
+        <% end %>
+      </ol>
+    </div>
+  <% end %>
+
+  <% if @control.verification_methods_list.any? %>
+    <div class="box">
+      <h3><%=l(:label_verification_methods)%></h3>
+      <ul>
+        <% @control.verification_methods_list.each do |method| %>
+          <li><%= method %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if @control.evidence_types_list.any? %>
+    <div class="box">
+      <h3><%=l(:label_evidence_types)%></h3>
+      <ul>
+        <% @control.evidence_types_list.each do |type| %>
+          <li><%= type %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if @gap_analyses_using_control.any? %>
+    <div class="box">
+      <h3><%=l(:label_used_in_gap_analyses)%></h3>
+      <ul>
+        <% @gap_analyses_using_control.each do |assessment| %>
+          <li>
+            <%= link_to assessment.gap_analysis.name,
+                        project_nis2_gap_analysis_path(assessment.gap_analysis.project, assessment.gap_analysis) %>
+            - <%= implementation_status_badge(assessment.implementation_status) %>
+            (<%= assessment.gap_analysis.project.name %>)
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+</div>
+
+<% content_for :header_tags do %>
+  <style>
+    .control-full-details .box {
+      margin-bottom: 20px;
+    }
+    .control-full-details .requirement {
+      border-left: 4px solid #856404;
+      background: #fff8e6;
+    }
+    .control-full-details .requirement-text {
+      font-style: italic;
+      padding: 10px;
+    }
+    .control-full-details ol,
+    .control-full-details ul {
+      margin: 10px 0;
+      padding-left: 30px;
+    }
+    .control-full-details li {
+      margin: 5px 0;
+    }
+  </style>
+<% end %>

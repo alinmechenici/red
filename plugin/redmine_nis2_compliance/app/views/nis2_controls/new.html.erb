@@ -1,0 +1,7 @@
+<h2><%=l(:label_new_control)%></h2>
+
+<%= form_for @control,
+             url: { action: 'create' },
+             html: { class: 'control-form' } do |f| %>
+  <%= render partial: 'form', locals: { f: f } %>
+<% end %>

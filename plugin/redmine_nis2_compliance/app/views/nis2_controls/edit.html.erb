@@ -1,0 +1,7 @@
+<h2><%=l(:label_edit_control)%></h2>
+
+<%= form_for @control,
+             url: { action: 'update', id: @control },
+             html: { method: :put, class: 'control-form' } do |f| %>
+  <%= render partial: 'form', locals: { f: f } %>
+<% end %>

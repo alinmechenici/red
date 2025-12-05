@@ -1,0 +1,273 @@
+<div class="contextual">
+  <%= link_to l(:button_back),
+              { controller: 'nis2_gap_analyses',
+                action: 'show',
+                id: @gap_analysis,
+                project_id: @project },
+              class: 'icon icon-cancel' %>
+</div>
+
+<h2><%=l(:label_assess_control)%></h2>
+
+<div class="control-details box">
+  <h3><%= @control.control_id %>: <%= @control.title %></h3>
+
+  <div class="attributes">
+    <p>
+      <strong><%=l(:field_category)%>:</strong>
+      <%= @control.category_name %>
+    </p>
+    <p>
+      <strong><%=l(:field_priority)%>:</strong>
+      <%= priority_badge(@control.priority) %>
+    </p>
+    <% if @control.description.present? %>
+      <p>
+        <strong><%=l(:field_description)%>:</strong><br/>
+        <%= simple_format(@control.description) %>
+      </p>
+    <% end %>
+    <% if @control.requirement_text.present? %>
+      <p>
+        <strong><%=l(:label_requirement)%>:</strong><br/>
+        <em><%= simple_format(@control.requirement_text) %></em>
+      </p>
+    <% end %>
+  </div>
+
+  <% if @control.implementation_guidance_list.any? %>
+    <details open>
+      <summary><strong><%=l(:label_implementation_guidance)%></strong></summary>
+      <ul>
+        <% @control.implementation_guidance_list.each do |guidance| %>
+          <li><%= guidance %></li>
+        <% end %>
+      </ul>
+    </details>
+  <% end %>
+
+  <% if @control.verification_methods_list.any? %>
+    <details>
+      <summary><strong><%=l(:label_verification_methods)%></strong></summary>
+      <ul>
+        <% @control.verification_methods_list.each do |method| %>
+          <li><%= method %></li>
+        <% end %>
+      </ul>
+    </details>
+  <% end %>
+
+  <% if @control.evidence_types_list.any? %>
+    <details>
+      <summary><strong><%=l(:label_evidence_types)%></strong></summary>
+      <ul>
+        <% @control.evidence_types_list.each do |type| %>
+          <li><%= type %></li>
+        <% end %>
+      </ul>
+    </details>
+  <% end %>
+
+  <% if @control.iso27001_controls.present? %>
+    <p>
+      <strong><%=l(:label_iso27001_mapping)%>:</strong>
+      <%= @control.iso27001_controls %>
+    </p>
+  <% end %>
+</div>
+
+<h3><%=l(:label_assessment)%></h3>
+
+<%= form_for @assessment,
+             url: { action: 'update',
+                    id: @assessment,
+                    gap_analysis_id: @gap_analysis,
+                    project_id: @project },
+             html: { method: :put, class: 'assessment-form' } do |f| %>
+
+  <%= error_messages_for 'assessment' %>
+
+  <div class="box tabular">
+    <p>
+      <%= f.label :implementation_status, l(:field_implementation_status) %> <span class="required">*</span>
+      <%= f.select :implementation_status,
+                   Nis2ControlAssessment::IMPLEMENTATION_STATUSES.map { |k, v| [v, k] },
+                   {}, required: true,
+                   class: 'implementation-status-select' %>
+    </p>
+
+    <div class="implementation-details-section" style="<%= 'display:none;' if @assessment.implementation_status == 'not_applicable' %>">
+      <p>
+        <%= f.label :implementation_details, l(:field_implementation_details) %>
+        <%= f.text_area :implementation_details, rows: 5, cols: 60,
+                        placeholder: l(:text_describe_current_implementation) %>
+      </p>
+
+      <div class="gap-section" style="<%= 'display:none;' unless @assessment.has_gap? %>">
+        <p>
+          <%= f.label :gap_description, l(:field_gap_description) %>
+          <%= f.text_area :gap_description, rows: 4, cols: 60,
+                          placeholder: l(:text_describe_gap) %>
+        </p>
+
+        <p>
+          <%= f.label :impact_assessment, l(:field_impact_assessment) %>
+          <%= f.text_area :impact_assessment, rows: 3, cols: 60,
+                          placeholder: l(:text_what_is_the_impact) %>
+        </p>
+
+        <p>
+          <%= f.label :root_cause, l(:field_root_cause) %>
+          <%= f.text_area :root_cause, rows: 3, cols: 60,
+                          placeholder: l(:text_why_does_gap_exist) %>
+        </p>
+
+        <p>
+          <%= f.label :recommendations, l(:field_recommendations) %>
+          <%= f.text_area :recommendations, rows: 5, cols: 60,
+                          placeholder: l(:text_how_to_close_gap) %>
+        </p>
+
+        <hr/>
+
+        <h4><%=l(:label_remediation_plan)%></h4>
+
+        <p>
+          <%= f.label :priority, l(:field_priority) %>
+          <%= f.select :priority,
+                       Nis2ControlAssessment::PRIORITIES.map { |k, v| [v, k] },
+                       { include_blank: l(:label_auto) } %>
+          <em class="info"><%=l(:text_leave_blank_for_auto)%></em>
+        </p>
+
+        <p>
+          <%= f.label :responsible_user_id, l(:field_responsible) %>
+          <%= f.select :responsible_user_id,
+                       options_for_select(
+                         [[l(:label_select_user), nil]] +
+                         @project.users.sort.map { |u| [u.name, u.id] },
+                         f.object.responsible_user_id
+                       ) %>
+        </p>
+
+        <p>
+          <%= f.label :target_completion_date, l(:field_target_date) %>
+          <%= f.date_field :target_completion_date %>
+        </p>
+
+        <p>
+          <%= f.label :estimated_effort_days, l(:field_estimated_effort) %>
+          <%= f.number_field :estimated_effort_days, step: 0.5, min: 0, placeholder: l(:label_days) %>
+          <em class="info"><%=l(:label_in_days)%></em>
+        </p>
+
+        <p>
+          <%= f.label :estimated_cost, l(:field_estimated_cost) %>
+          <%= f.number_field :estimated_cost, step: 0.01, min: 0, placeholder: '0.00' %>
+          <em class="info"><%=l(:text_currency)%></em>
+        </p>
+      </div>
+
+      <div class="completion-section" style="<%= 'display:none;' unless @assessment.implementation_status == 'implemented' %>">
+        <p>
+          <%= f.label :actual_completion_date, l(:field_actual_completion_date) %>
+          <%= f.date_field :actual_completion_date %>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <p style="margin-top: 15px;">
+    <%= f.submit l(:button_save_assessment), class: 'button-positive' %>
+    <% if @assessment.has_gap? && @assessment.linked_issue.nil? %>
+      <%= f.submit l(:button_save_and_create_issue), name: 'create_issue', class: 'button' %>
+    <% end %>
+    <%= link_to l(:button_cancel),
+                { controller: 'nis2_gap_analyses',
+                  action: 'show',
+                  id: @gap_analysis,
+                  project_id: @project },
+                class: 'button-negative' %>
+  </p>
+<% end %>
+
+<% if @assessment.linked_issue %>
+  <div class="flash notice">
+    <strong>📌 Linked Issue:</strong>
+    <%= link_to "##{@assessment.linked_issue.id}: #{@assessment.linked_issue.subject}",
+                issue_path(@assessment.linked_issue) %>
+  </div>
+<% end %>
+
+<% content_for :header_tags do %>
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+      var statusSelect = document.querySelector('.implementation-status-select');
+      var detailsSection = document.querySelector('.implementation-details-section');
+      var gapSection = document.querySelector('.gap-section');
+      var completionSection = document.querySelector('.completion-section');
+
+      if (statusSelect) {
+        statusSelect.addEventListener('change', function() {
+          var status = this.value;
+
+          // Show/hide details section
+          if (status === 'not_applicable') {
+            detailsSection.style.display = 'none';
+          } else {
+            detailsSection.style.display = 'block';
+          }
+
+          // Show/hide gap section
+          if (status === 'not_implemented' || status === 'partially_implemented') {
+            gapSection.style.display = 'block';
+          } else {
+            gapSection.style.display = 'none';
+          }
+
+          // Show/hide completion section
+          if (status === 'implemented') {
+            completionSection.style.display = 'block';
+          } else {
+            completionSection.style.display = 'none';
+          }
+        });
+      }
+    });
+  </script>
+
+  <style>
+    .control-details {
+      background: #f9f9f9;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-left: 4px solid #169;
+    }
+    .control-details h3 {
+      margin-top: 0;
+      color: #169;
+    }
+    .control-details details {
+      margin: 10px 0;
+    }
+    .control-details summary {
+      cursor: pointer;
+      user-select: none;
+      padding: 5px 0;
+    }
+    .control-details summary:hover {
+      color: #169;
+    }
+    .assessment-form .gap-section,
+    .assessment-form .completion-section {
+      background: #fffef0;
+      padding: 15px;
+      border-left: 3px solid #ffc107;
+      margin: 15px 0;
+    }
+    .assessment-form h4 {
+      margin-top: 0;
+      color: #856404;
+    }
+  </style>
+<% end %>

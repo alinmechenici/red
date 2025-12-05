@@ -1,0 +1,84 @@
+<h2><%=l(:label_gap_analyses)%></h2>
+
+<div class="contextual">
+  <%= link_to l(:button_create_gap_analysis),
+              { action: 'new', project_id: @project },
+              class: 'icon icon-add' %>
+</div>
+
+<% if @gap_analyses.any? %>
+  <table class="list gap-analyses">
+    <thead>
+      <tr>
+        <th><%= l(:field_name) %></th>
+        <th><%= l(:field_status) %></th>
+        <th><%= l(:field_compliance_score) %></th>
+        <th><%= l(:field_assessment_date) %></th>
+        <th><%= l(:field_assessor) %></th>
+        <th><%= l(:field_reviewer) %></th>
+        <th class="buttons"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @gap_analyses.each do |gap_analysis| %>
+        <tr class="<%= cycle('odd', 'even') %> <%= gap_analysis.status %>">
+          <td class="name">
+            <%= link_to gap_analysis.name,
+                        { action: 'show', id: gap_analysis, project_id: @project },
+                        class: 'gap-analysis' %>
+            <% if gap_analysis.description.present? %>
+              <br/><small><%= truncate(gap_analysis.description, length: 100) %></small>
+            <% end %>
+          </td>
+          <td class="status">
+            <%= gap_analysis_status_badge(gap_analysis) %>
+          </td>
+          <td class="score">
+            <%= compliance_score_badge(gap_analysis.overall_compliance_score) %>
+          </td>
+          <td class="date">
+            <%= format_date(gap_analysis.assessment_date) %>
+          </td>
+          <td class="assessor">
+            <%= link_to_user(gap_analysis.assessor) %>
+          </td>
+          <td class="reviewer">
+            <%= link_to_user(gap_analysis.reviewer) if gap_analysis.reviewer %>
+          </td>
+          <td class="buttons">
+            <%= link_to l(:button_show),
+                        { action: 'show', id: gap_analysis, project_id: @project },
+                        class: 'icon icon-zoom-in',
+                        title: l(:button_show) %>
+            <%= link_to l(:button_edit),
+                        { action: 'edit', id: gap_analysis, project_id: @project },
+                        class: 'icon icon-edit',
+                        title: l(:button_edit) if User.current.allowed_to?(:manage_nis2_gap_analysis, @project) %>
+            <%= link_to l(:button_delete),
+                        { action: 'destroy', id: gap_analysis, project_id: @project },
+                        method: :delete,
+                        data: { confirm: l(:text_are_you_sure) },
+                        class: 'icon icon-del',
+                        title: l(:button_delete) if User.current.allowed_to?(:manage_nis2_gap_analysis, @project) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <% if @gap_analyses.respond_to?(:total_pages) %>
+    <p class="pagination"><%= paginate @gap_analyses %></p>
+  <% end %>
+
+<% else %>
+  <p class="nodata">
+    <%= l(:label_no_gap_analysis_yet) %>
+  </p>
+<% end %>
+
+<% content_for :sidebar do %>
+  <h3><%=l(:label_statistics)%></h3>
+  <ul>
+    <li><%= l(:label_total) %>: <strong><%= @gap_analyses.total_count rescue @gap_analyses.count %></strong></li>
+  </ul>
+<% end %>

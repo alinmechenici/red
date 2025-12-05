@@ -1,0 +1,49 @@
+<%= error_messages_for 'gap_analysis' %>
+
+<div class="box tabular">
+  <p>
+    <%= f.label :name, l(:field_name) %>
+    <%= f.text_field :name, required: true, size: 60, maxlength: 255 %>
+  </p>
+
+  <p>
+    <%= f.label :description, l(:field_description) %>
+    <%= f.text_area :description, rows: 5, cols: 60 %>
+  </p>
+
+  <p>
+    <%= f.label :status, l(:field_status) %>
+    <%= f.select :status,
+                 Nis2GapAnalysis::STATUSES.map { |k, v| [v, k] },
+                 {}, required: true %>
+  </p>
+
+  <p>
+    <%= f.label :assessment_date, l(:field_assessment_date) %>
+    <%= f.date_field :assessment_date, required: true %>
+  </p>
+
+  <p>
+    <%= f.label :target_completion_date, l(:field_target_completion_date) %>
+    <%= f.date_field :target_completion_date %>
+    <em class="info"><%=l(:text_optional)%></em>
+  </p>
+
+  <p>
+    <%= f.label :reviewer_id, l(:field_reviewer) %>
+    <%= f.select :reviewer_id,
+                 options_for_select(
+                   [[l(:label_none), nil]] +
+                   @project.users.sort.map { |u| [u.name, u.id] },
+                   f.object.reviewer_id
+                 ) %>
+    <em class="info"><%=l(:text_optional)%></em>
+  </p>
+</div>
+
+<p style="margin-top: 10px;">
+  <%= f.submit l(:button_save), class: 'button-positive' %>
+  <%= link_to l(:button_cancel),
+              { action: 'index', project_id: @project },
+              class: 'button-negative' %>
+</p>

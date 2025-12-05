@@ -1,0 +1,114 @@
+<h2><%=l(:label_nis2_controls)%></h2>
+
+<div class="contextual">
+  <%= link_to l(:button_new_control),
+              { action: 'new' },
+              class: 'icon icon-add' if User.current.admin? %>
+</div>
+
+<div class="autoscroll">
+  <div class="filters">
+    <%= form_tag({action: 'index'}, method: :get) do %>
+      <label for="category"><%=l(:field_category)%>:</label>
+      <%= select_tag 'category',
+                     options_for_select(
+                       [[l(:label_all), '']] + Nis2Control.categories_for_select,
+                       params[:category]
+                     ),
+                     onchange: 'this.form.submit()' %>
+
+      <label for="priority"><%=l(:field_priority)%>:</label>
+      <%= select_tag 'priority',
+                     options_for_select(
+                       [[l(:label_all), '']] + Nis2Control.priorities_for_select,
+                       params[:priority]
+                     ),
+                     onchange: 'this.form.submit()' %>
+    <% end %>
+  </div>
+
+  <% if @stats %>
+    <div class="stats box">
+      <h3><%=l(:label_statistics)%></h3>
+      <p><strong><%=l(:label_total)%>:</strong> <%= @stats[:total] %></p>
+
+      <p><strong><%=l(:label_by_category)%>:</strong></p>
+      <ul>
+        <% @stats[:by_category].each do |category, count| %>
+          <li><%= category_name(category) %>: <%= count %></li>
+        <% end %>
+      </ul>
+
+      <p><strong><%=l(:label_by_priority)%>:</strong></p>
+      <ul>
+        <% @stats[:by_priority].each do |priority, count| %>
+          <li><%= Nis2Control::PRIORITIES[priority] %>: <%= count %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <table class="list controls">
+    <thead>
+      <tr>
+        <th style="width: 10%"><%=l(:field_control_id)%></th>
+        <th style="width: 25%"><%=l(:field_title)%></th>
+        <th style="width: 15%"><%=l(:field_category)%></th>
+        <th style="width: 10%"><%=l(:field_priority)%></th>
+        <th style="width: 10%"><%=l(:label_iso27001)%></th>
+        <th style="width: 10%"><%=l(:field_status)%></th>
+        <th class="buttons" style="width: 10%"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @controls.each do |control| %>
+        <tr class="<%= cycle('odd', 'even') %> <%= 'inactive' unless control.is_active %>">
+          <td class="control-id">
+            <%= link_to control.control_id, { action: 'show', id: control } %>
+          </td>
+          <td class="title">
+            <%= control.title %>
+          </td>
+          <td class="category">
+            <%= category_icon(control.category) %>
+            <%= control.category_name %>
+          </td>
+          <td class="priority">
+            <%= priority_badge(control.priority) %>
+          </td>
+          <td class="iso">
+            <%= control.iso27001_controls %>
+          </td>
+          <td class="status">
+            <% if control.is_active %>
+              <span class="label label-success"><%=l(:label_active)%></span>
+            <% else %>
+              <span class="label label-secondary"><%=l(:label_inactive)%></span>
+            <% end %>
+          </td>
+          <td class="buttons">
+            <%= link_to l(:button_show),
+                        { action: 'show', id: control },
+                        class: 'icon icon-zoom-in',
+                        title: l(:button_show) %>
+            <% if User.current.admin? %>
+              <%= link_to l(:button_edit),
+                          { action: 'edit', id: control },
+                          class: 'icon icon-edit',
+                          title: l(:button_edit) %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <% if @controls.respond_to?(:total_pages) %>
+    <p class="pagination"><%= paginate @controls %></p>
+  <% end %>
+</div>
+
+<% content_for :sidebar do %>
+  <h3><%=l(:label_nis2_compliance)%></h3>
+  <p><%=l(:text_nis2_controls_description)%></p>
+<% end %>
